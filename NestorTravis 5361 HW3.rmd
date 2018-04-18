@@ -1,0 +1,146 @@
+---
+title: "Homework 3"
+output: 
+  pdf_document: 
+    keep_tex: yes
+---
+---
+# 1. Validate Algorithm given Log-likelihood function
+$$l_n^c(\Psi) = \sum_{i=1}^n \sum_{j=1}^mz_{ij} log\{\pi_j\phi(y_i-x_i^T\beta_j;0, \sigma^2)\}$$
+##E-step: take conditional expetation of $$l_n^c(\Psi)$$ 
+#Note: Let $$Y={(x_i, z_i, y_i)}$$ where $$z_i$$ is the missing data
+
+  Let $$Q(\Psi;\Psi^{(k)}) = E[l_n^c(\Psi)] = E[log (L_n^c(\Psi;Y) ;x_i, y_i, \Psi^{(k)}]$$
+  
+  $$=\sum p(z_i;x_i, y_i, \Psi^{(k)}) ln (p(x, y, z; \Psi))$$    # Reduces as Z is discrete
+  
+  $$\Rightarrow Q(\Psi, \Psi^{(k)}) =  \sum p(z_i;z_i, y_i, \Psi^{(k)}) log p(x, y, z;\Psi)$$
+  
+  $$=\sum_{i=1}^n \sum_{j=1}^m p(z_i = k ; y_i, x_i, \Psi^{(k)}) log p(z_i=k, y_i, x_i; \Psi)$$
+  
+  ## Use Bayes Theorem to replace $$p(z_i = k ; y_i, x_i, \Psi^{(k)})$$
+  ## Let $$P_{ij}^{k+1} = p(z_i = k ; y_i, x_i, \Psi^{(k)})$$
+  
+  $$= p(z_i = k, y_i, x_i ; \Psi^{(k)}) / p(y_i, x_i ; \Psi^{(k)})$$
+  
+  $$= p(z_i = k, y_i, x_i, ; \Psi^{(k)}) / \sum_{s=1}^m p(z_i = s, x_i, y_i ; \Psi^{(k)})$$
+      and
+   $$p(z_i = k, y_i, x_i, ; \Psi^{(k)}) =\pi_j^{(k)}$$            $$\phi(y_i-x_i^T\beta_j^{(k)};0,\sigma^{2(k)}\}$$
+      
+  $$\Rightarrow P_{ij}^{k+1} =(\pi_j^{(k)} \phi(y_i-x_i^T\beta_j^{(k)};0,\sigma^{2(k)}\}) /        \sum_{j=1}^m\phi(y_i-x_i^T\beta_j^{(k)};0,\sigma^{2(k)}\})$$
+    
+So we have: $$Q(\Psi;\Psi^{(k)}) =\sum_{i=1}^n \sum_{j=1}^m  P_{ij}^{k+1} log p(z_i=k, y_i, x_i; \Psi)$$   
+  # Reduce further by the same process as above:
+$$log p(z_i=k, y_i, x_i; \Psi) = log\{\pi_j\phi(y_i-x_i^T \beta_j;0, \sigma^2)\}$$
+$$ = \log\pi_j + log \phi(y_i-x_i^T \beta_j;0, \sigma^2)\ $$  # By logarithm properties
+  
+ M-step, Maximize $$Q(\Psi;\Psi ^ {(k)})$$
+
+ Maximazation of $$\pi_j ^ {(k)}$$
+Since   $$\sum_{j=1} ^n \pi_j ^ {(k)}=1$$
+  then  $$\delta \mathcal{L} (\pi_1, ... , \pi_j)/ \delta \pi_j = 0$$
+  where $$\mathcal{L} (\pi_1, ... , \pi_j) = \sum_{j=1} ^ k \sum_{i=1} ^ {(k)} log(\pi_j) - \lambda\{\sum_{j=1} ^ {(k)} \pi_j - 1 \}$$       # with $$\lambda$$ a Lagrange multiplier
+
+  $$\Rightarrow    \pi_j = (P_{ij}^{k+1}) / \sum_{j=1} ^ {(k+1)} P_{ij} ^ {(k+1)}$$
+
+Since for each $$j$$, $$\sum_{j=1} ^ {(k+1)} P_{ij} ^ {(k+1)} =1 $$,
+$$\Rightarrow \pi_j ^ {(k+1)} = (1/n) \sum_{i=1} ^ n P_{ij} ^ {(k+1)} $$
+
+Calcuation of $$\beta_j^{(k+1)}$$
+
+By properties of sample mean 
+$$\mu = \beta_j^{(k+1)} * x_i ^T$$
+must be the mean of a weighted sample
+Therefore 
+
+$$\beta_j ^{(k+1)}  x_i ^T = (\sum_{i=1}^n P_{ij} ^ {(k+1)} y_i) / (\sum_{i=1}^n P_{ij} ^ {(k+1)})$$
+Multiply both sides by $$x_i^T$$ and multiply the right hand side by $$x_i$$
+  
+$$\Rightarrow \beta_j ^{(k+1)} = (\sum_{i=1}^n x_i x_i ^T P_{ij} ^ {(k+1)}) ^ {-1} (\sum_{i=1}^n x_i y_i P_{ij} ^ {(k+1)})$$
+  
+Similarly 
+$$\sigma ^ {2(k+1)}$$is the sample variance of the weighted sample
+  
+$$\sigma ^ {2(k+1)} = (\sum_{i=1} ^ n P_{ij} ^ {(k+1)} (y_i - \beta_j^{(k+1)}  x_i^T)  (y_i - \beta_j ^ {(k+1)} * x_i ^T)')  /   (\sum_{i=1} ^ n P_{ij} ^ {(k+1)})$$
+Use same equivalency we used to calculate
+$$\pi_j ^ {(k+1)}$$ where:
+$$\pi_j ^ {(k+1)}  =  (\sum_{j=1} ^ m P_{ij} ^ {(k+1)}) (\sum_{i=1} ^ n \sum_{j=1} ^ m P_{ij} ^ {(k+1)})$$
+So by taking the summation the top and bottom of the right hand side and replacing with  
+$$\pi_j ^ {(k+1)}$$, we get:
+$$\sum_{j=1}^m (y_i - \beta_j^{(k+1)}  x_i^T)  (y_i - \beta_j ^ {(k+1)} * x_i ^T)')$$
+$$\Rightarrow [\sum_{j=1} ^ m \sum_{i=1} ^ n P_{ij} ^ {(k+1)}  (y_i - \beta_j^{(k+1)}  x_i^T) ^ 2] / n$$
+    
+---
+
+# 2.  Given probability densities f(x) and g(x)
+
+a) Find normailizing constant C, and show g(x) is a mixture of 
+    two gamma functions and determine weights 
+```
+ Set theta =1 to find constant C
+ fun <- function(x) {((x^.5)*exp(-x) + 2*exp(-x))} # distribute exp(-x) to separate functions
+ integrate(fun, lower = 0, upper = Inf)
+ #receive 2.886227
+ C     <- 1 / 2.886227        #normalizing constant
+```
+As g(x) can be separated into $exp(-x) * (2*x^{(\theta -1)}$$ 
+and $$x ^ (\theta - .5) * e^{(-x)} $$
+ we can clearly see g is a 
+composition of gamma functions where $$r = 1$$ and $$a = \theta$$
+
+```
+  fun.1     <- function(x) {2*exp(-x)}
+  Fun.1     <- integrate(fun.1, lower = 0, upper = Inf)
+  fun.2     <- function(x) {x^(.5)*exp(-x)}
+  Fun.2     <- integrate(fun.2, lower = 0, upper = Inf)
+  
+weightfun.1 <- print((Fun.1$$value)*C)        #weighted component 1
+weightfun.2 <- print((Fun.2$$value)*C)        #weighted component 2
+```
+b)
+
+```
+probdenG <- function(x, theta) {
+            (2 * x ^ (theta-1) + x ^ (theta - .5)) * exp(-x)
+}
+ 
+```
+2) a)
+As $$g(x) = (2x^{\theta-1}+x^{\theta-1/2})e^{-x}$$ 
+
+we find normalizing constant C such that
+$$2C*\Gamma(\theta)+C*\Gamma(\theta+\frac{1}{2}=1)$$
+ $$\Rightarrow C=\frac{1}{2\Gamma(\theta)+\Gamma(\theta+\frac{1}{2})}$$
+Therefore we can change $g(x)$ to
+$$g(x)=\frac{1}{2\Gamma(\theta)+\Gamma(\theta+\frac{1}{2})}2x^{\theta-1}e^{-x}+\frac{1}{2\Gamma(\theta)+\Gamma(\theta+\frac{1}{2})}2x^{\theta-1/2}e^{-x}$$
+
+$$\Rightarrow g(x) = \Gamma (\theta, 1)$$ 
+weighted by
+$$2 * \Gamma(\theta) / (2\Gamma(\theta)+\Gamma(\theta+.5))$$
+and
+$$ \Gamma (.5*\theta, 1)$$
+weighted by 
+and $$\Gamma(\theta+.5) / (2 * \Gamma(\theta)+\Gamma(\theta+.5))$$
+
+b) 
+```
+fun.g <- function(theta) {
+  n <- 10000
+  weight <- 2*gamma(theta) / (2*gamma(theta)+gamma(theta+1/2))
+  iter <- 0
+  niter <- c()
+  rand <- runif(n)
+  for (i in 1:n) {
+    if (rand[i] < weight) {
+      x <- rgamma91, theta, 1)
+      iter <- iter + 1
+      niter <- c(niter, x)
+    }
+  }
+  return(niter)
+}
+
+graph.g <- fun.g(1)
+hist(graph.g)
+```
+
