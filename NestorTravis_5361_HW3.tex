@@ -1,0 +1,171 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Homework 3},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Homework 3}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{}
+  \preauthor{}\postauthor{}
+  \date{}
+  \predate{}\postdate{}
+
+
+\begin{document}
+\maketitle
+
+\section{2. Given probability densities f(x) and
+g(x)}\label{given-probability-densities-fx-and-gx}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\item
+  Find normailizing constant C, and show g(x) is a mixture of two gamma
+  functions and determine weights
+
+\begin{verbatim}
+ Set theta =1 to find constant C
+ fun <- function(x) {((x^.5)*exp(-x) + 2*exp(-x))} # distribute exp(-x) to separate functions
+ integrate(fun, lower = 0, upper = Inf)
+ #receive 2.886227
+ C     <- 1 / 2.886227        #normalizing constant
+\end{verbatim}
+
+  As g(x) can be separated into \(exp(-x) * (2*x^{(\theta -1)}\)\$ and
+  \[x ^ (\theta - .5) * e^{(-x)} \] we can clearly see g is a
+  composition of gamma functions where \[r = 1\] and \[a = \theta\]
+\end{enumerate}
+
+\begin{verbatim}
+  fun.1     <- function(x) {2*exp(-x)}
+  Fun.1     <- integrate(fun.1, lower = 0, upper = Inf)
+  fun.2     <- function(x) {x^(.5)*exp(-x)}
+  Fun.2     <- integrate(fun.2, lower = 0, upper = Inf)
+  
+weightfun.1 <- print((Fun.1$$value)*C)        #weighted component 1
+weightfun.2 <- print((Fun.2$$value)*C)        #weighted component 2
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{1}
+\item
+\end{enumerate}
+
+\begin{verbatim}
+probdenG <- function(x, theta) {
+            (2 * x ^ (theta-1) + x ^ (theta - .5)) * exp(-x)
+}
+ 
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{1}
+\item
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii})}
+  \tightlist
+  \item
+    As \[g(x) = (2x^{\theta-1}+x^{\theta-1/2})e^{-x}\]
+  \end{enumerate}
+\end{enumerate}
+
+we find normalizing constant C such that
+\[2C*\Gamma(\theta)+C*\Gamma(\theta+\frac{1}{2}=1)\]
+\[\Rightarrow C=\frac{1}{2\Gamma(\theta)+\Gamma(\theta+\frac{1}{2})}\]
+Therefore we can change \(g(x)\) to
+\[g(x)=\frac{1}{2\Gamma(\theta)+\Gamma(\theta+\frac{1}{2})}2x^{\theta-1}e^{-x}+\frac{1}{2\Gamma(\theta)+\Gamma(\theta+\frac{1}{2})}2x^{\theta-1/2}e^{-x}\]
+
+\[\Rightarrow g(x) = \Gamma (\theta, 1)\] weighted by
+\[2 * \Gamma(\theta) / (2\Gamma(\theta)+\Gamma(\theta+.5))\] and
+\[ \Gamma (.5*\theta, 1)\] weighted by and
+\[\Gamma(\theta+.5) / (2 * \Gamma(\theta)+\Gamma(\theta+.5))\]
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  ``` fun.g \textless{}- function(theta) \{ n \textless{}- 10000 weight
+  \textless{}- 2\emph{gamma(theta) / (2}gamma(theta)+gamma(theta+1/2))
+  iter \textless{}- 0 niter \textless{}- c() rand \textless{}- runif(n)
+  for (i in 1:n) \{ if (rand{[}i{]} \textless{} weight) \{ x
+  \textless{}- rgamma91, theta, 1) iter \textless{}- iter + 1 niter
+  \textless{}- c(niter, x) \} \} return(niter) \}
+\end{enumerate}
+
+graph.g \textless{}- fun.g(1) hist(graph.g) ```
+
+
+\end{document}
